@@ -1,48 +1,64 @@
 import Marquee from 'react-fast-marquee';
+import { useState } from 'react';
 
 const Partnership = () => {
+  const [loadedImages, setLoadedImages] = useState(new Set());
+
   const partners = [
     {
       name: 'Esri',
-      logo: 'https://www.esri.com/content/dam/esrisites/en-us/common/icons/product-logos/ArcGIS-Pro.png',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Esri_logo_2C.png',
     },
     {
       name: 'Trimble',
-      logo: 'https://download.logo.wine/logo/Trimble_Inc./Trimble_Inc.-Logo.wine.png',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Trimble_Navigation_Logo.svg',
     },
     {
       name: 'Autodesk',
-      logo: 'https://seeklogo.com/images/A/autodesk-logo-C9709D7D24-seeklogo.com.png',
+      logo: 'https://1000logos.net/wp-content/uploads/2021/04/AutoDesk-logo.png',
     },
     {
       name: 'DJI Enterprise',
-      logo: 'https://seeklogo.com/images/D/dji-logo-42A8B14835-seeklogo.com.png',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e9/DJI_Logo.svg',
     },
     {
       name: 'Hexagon',
-      logo: 'https://seeklogo.com/images/H/hexagon-logo-B5FE690B37-seeklogo.com.png',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/8/8f/Hexagon_AB_logo.svg',
     },
     {
       name: 'Maxar',
-      logo: 'https://cdn.maxar.com/com/images/logo.svg',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/7/77/Maxar_Logo.svg',
     },
     {
       name: 'Microsoft',
-      logo: 'https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RE1Mu3b?ver=5c31',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg',
     },
     {
       name: 'Amazon AWS',
-      logo: 'https://d1.awsstatic.com/logos/aws-logo-lockups/poweredbyaws/PB_AWS_logo_RGB_stacked_REV_SQ.91cd4af40773cbfbd15577a3c2b8a346fe3e8fa2.png',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg',
     },
     {
       name: 'Google Cloud',
-      logo: 'https://seeklogo.com/images/G/google-cloud-logo-ADE788217F-seeklogo.com.png',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/6/61/Google_Cloud_Logo.svg',
     },
     {
       name: 'IBM',
-      logo: 'https://www.ibm.com/brand/experience-guides/developer/b1db1ae501d522a1a4b49613fe07c9f1/01_8-bar-positive.svg',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg',
     },
   ];
+
+  const handleImageLoad = (name) => {
+    setLoadedImages((prev) => new Set([...prev, name]));
+  };
+
+  const handleImageError = (e, name) => {
+    console.log(`Failed to load image for ${name}`);
+    e.target.onerror = null;
+    // Use a more reliable placeholder service
+    e.target.src = `https://placehold.co/200x100/FFFFFF/000000?text=${encodeURIComponent(
+      name
+    )}`;
+  };
 
   return (
     <section className="py-16 bg-white border-y border-gray-100">
@@ -58,18 +74,18 @@ const Partnership = () => {
             {partners.map((partner, index) => (
               <div
                 key={index}
-                className="flex items-center justify-center h-16 w-40 opacity-60 hover:opacity-100 transition-opacity duration-300"
+                className="flex items-center justify-center h-16 w-48 opacity-60 hover:opacity-100 transition-opacity duration-300"
               >
                 <img
                   src={partner.logo}
                   alt={partner.name}
-                  className="max-h-full max-w-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = `https://via.placeholder.com/160x80?text=${encodeURIComponent(
-                      partner.name
-                    )}`;
-                  }}
+                  className={`max-h-12 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300 ${
+                    loadedImages.has(partner.name) ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  style={{ maxWidth: '100%' }}
+                  onLoad={() => handleImageLoad(partner.name)}
+                  onError={(e) => handleImageError(e, partner.name)}
+                  loading="lazy"
                 />
               </div>
             ))}
